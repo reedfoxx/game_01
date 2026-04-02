@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор кубиков 3D</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --die-color: #ffffff;
+            --accent-color: #4a90e2;
+            --symbol-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h1 { color: #444; margin-bottom: 20px; }
+
+        /* Игровое поле 3х3 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 15px;
+            padding: 15px;
+            background: #ccc;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        /* Стили кубика */
+        .die {
+            background-color: var(--die-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            box-shadow: inset 0 -4px 0 #ddd, 0 4px 6px rgba(0,0,0,0.1);
+            user-select: none;
+            transition: transform 0.2s ease;
+        }
+
+        /* SVG иконки для четкости */
+        svg {
+            width: 60px;
+            height: 60px;
+            fill: none;
+            stroke: var(--symbol-color);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        button {
+            margin-top: 30px;
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+        }
+
+        button:hover { background-color: #357abd; }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <h1>Генератор Поля</h1>
+
+    <div class="grid" id="grid">
+        </div>
+
+    <button onclick="generateGrid()">СГЕНЕРИРОВАТЬ</button>
+
+    <script>
+        // Набор символов согласно вашему списку
+        const symbols = [
+            // Группа 1
+            `<polygon points="30,10 50,50 10,50" />`, // Треугольник
+            `<rect x="15" y="15" width="30" height="30" />`, // Квадрат
+            `<circle cx="30" cy="30" r="20" />`, // Круг
+            // Группа 2
+            `<path d="M10,25 Q20,15 30,25 T50,25 M10,35 Q20,25 30,35 T50,35" />`, // Две волны
+            `<line x1="15" y1="45" x2="45" y2="15" />`, // Наклонная палочка
+            `<circle cx="30" cy="30" r="20" /><path d="M22,35 Q30,45 38,35" /><circle cx="23" cy="25" r="1" /><circle cx="37" cy="25" r="1" />`, // Смайлик
+            // Группа 3
+            `<path d="M30,10 L30,50 M15,25 L30,10 L45,25" />`, // Стрелочка
+            `<circle cx="30" cy="20" r="3" fill="currentColor"/><circle cx="30" cy="40" r="3" fill="currentColor"/>`, // Две точки
+            `<circle cx="30" cy="15" r="3" fill="currentColor"/><circle cx="30" cy="30" r="3" fill="currentColor"/><circle cx="30" cy="45" r="3" fill="currentColor"/>` // Три точки
+        ];
+
+        function generateGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = ''; // Очистка поля
+
+            // Перемешиваем массив символов, чтобы каждый раз был разный порядок
+            let shuffled = [...symbols].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(symbol => {
+                const die = document.createElement('div');
+                die.className = 'die';
+                
+                // Генерируем случайный поворот (0, 90, 180, 270 градусов)
+                const rotations = [0, 90, 180, 270];
+                const randomRotation = rotations[Math.floor(Math.random() * rotations.length)];
+
+                die.innerHTML = `
+                    <svg viewBox="0 0 60 60" style="transform: rotate(${randomRotation}deg)">
+                        ${symbol}
+                    </svg>
+                `;
+                
+                grid.appendChild(die);
+            });
+        }
+
+        // Запуск при загрузке страницы
+        window.onload = generateGrid;
+    </script>
+</body>
+</html>
